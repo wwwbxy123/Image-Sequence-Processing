@@ -24,29 +24,33 @@ V3fstruct (im);
 V3fstruct (tm);
 int        x,y,z;           /* index counters                 */
 int        n = 3;               /* Number of frames    */
-int        sum;
-int        avg = (im.zhi + im.zlo) / 2;
-
-    VXparse(&argc, &argv, par); /* parse the command line    */
+//int        sum;
+   
+   VXparse(&argc, &argv, par); /* parse the command line    */
 
     n = (NVAL ? atoi(NVAL) : 1); /* read n, default is n=1   */
-
+    n = 3;
     while (Vbfread( &im, IVAL, n)) {
 	if ( im.type != VX_PBYTE || im.chan != 1) { /* check format  */
            fprintf (stderr, "image not byte type\n");
            exit (1);
         }
+//	int        avg = (im.zhi + im.zlo) / 2;
+
+//	printf("%d, %d, %d", im.zlo,avg,im.zhi);
+
         for (y = im.ylo; y <= im.yhi; y++) {
            for (x = im.xlo; x <= im.xhi; x++) {
-              if((im.u[avg][y][x] <= im.u[im.zlo][y][x] && im.u[im.zlo][y][x] <= im.u[im.zhi][y][x]) || (im.u[im.zhi][y][x] <= im.u[im.zlo][y][x] && im.u[im.zlo][y][x] <= im.u[avg][y][x]))
-                      im.u[0][y][x] = im.u[im.zlo][y][x];
+              if((im.u[1][y][x] <= im.u[0][y][x] && im.u[0][y][x] <= im.u[2][y][x]) || (im.u[2][y][x] <= im.u[0][y][x] && im.u[0][y][x] <= im.u[1][y][x]))
+                      im.u[0][y][x] = im.u[0][y][x];
                          //0 
-              if((im.u[im.zlo][y][x] <= im.u[avg][y][x] && im.u[avg][y][x] <= im.u[im.zhi][y][x]) || (im.u[im.zhi][y][x] <= im.u[avg][y][x] && im.u[avg][y][x] <= im.u[im.zlo][y][x]))
-                      im.u[0][y][x] = im.u[avg][y][x];
+              if((im.u[0][y][x] <= im.u[1][y][x] && im.u[1][y][x] <= im.u[2][y][x]) || (im.u[2][y][x] <= im.u[1][y][x] && im.u[1][y][x] <= im.u[0][y][x]))
+                      im.u[0][y][x] = im.u[1][y][x];
                           //1
-              if((im.u[avg][y][x] <= im.u[im.zhi][y][x] && im.u[im.zhi][y][x] <= im.u[im.zlo][y][x]) || (im.u[im.zlo][y][x] <= im.u[im.zhi][y][x] && im.u[im.zhi][y][x] <= im.u[avg][y][x]))
-                      im.u[0][y][x] = im.u[im.zhi][y][x];
+              if((im.u[1][y][x] <= im.u[2][y][x] && im.u[2][y][x] <= im.u[0][y][x]) || (im.u[0][y][x] <= im.u[2][y][x] && im.u[2][y][x] <= im.u[1][y][x]))
+                      im.u[0][y][x] = im.u[2][y][x];
                           //2
+//		 printf("%d, %d, %d", im.zlo,avg,im.zhi);
             }
         }
         V3fwrite (&im, OVAL); /* write the oldest frame */
